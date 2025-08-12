@@ -1,4 +1,5 @@
-from flask import Flask, render_template_string
+from flask import Flask, send_from_directory, render_template_string
+import os
 
 app = Flask(__name__)
 
@@ -7,28 +8,28 @@ HTML = """
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Birthday Card 🎀</title>
+<title>Happy Birthday Bestie 🎀</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body {
-    background: linear-gradient(135deg, #ffb3ec, #b3c7ff);
-    font-family: 'Arial', sans-serif;
     margin: 0;
-    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #ffb3ec, #b3c7ff);
     display: flex;
-    height: 100vh;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    height: 100vh;
 }
 .card-container {
     perspective: 1500px;
 }
 .card {
-    width: 400px;
-    height: 500px;
+    width: 90vw;
+    max-width: 900px;
+    height: 90vh;
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 1s ease-in-out;
+    transition: transform 1s;
 }
 .card.open {
     transform: rotateY(-180deg);
@@ -40,9 +41,10 @@ body {
     backface-visibility: hidden;
     border-radius: 15px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    overflow-y: auto;
 }
 .front {
-    background: #ff90d4;
+    background: linear-gradient(135deg, #ff90d4, #ffd166);
     color: white;
     display: flex;
     flex-direction: column;
@@ -51,6 +53,7 @@ body {
 }
 .front h1 {
     font-size: 2rem;
+    text-align: center;
 }
 .front button {
     padding: 10px 20px;
@@ -63,27 +66,35 @@ body {
     margin-top: 15px;
 }
 .back {
-    background: white;
+    background: #fff;
     color: #333;
     transform: rotateY(180deg);
     padding: 20px;
-    overflow-y: auto;
-    border-radius: 15px;
 }
-.song {
-    margin: 10px 0;
+.message {
+    font-size: 1rem;
+    margin-bottom: 20px;
 }
-.gallery {
+.scrapbook {
     display: flex;
-    gap: 10px;
     flex-wrap: wrap;
-    margin-top: 10px;
+    gap: 15px;
+    justify-content: center;
 }
-.gallery img {
-    width: 100px;
-    height: 100px;
+.scrapbook .item {
+    background: white;
+    padding: 5px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transform: rotate(calc(-5deg + 10deg * var(--i)));
+    border: 5px solid var(--color);
+}
+.scrapbook img, .scrapbook video {
+    display: block;
+    width: 180px;
+    height: 180px;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 4px;
 }
 </style>
 </head>
@@ -92,64 +103,62 @@ body {
 <div class="card-container">
     <div class="card" id="card">
         <div class="side front">
-            <h1>Happy Birthday Bestie 🎉</h1>
-            <p>Click to open your surprise 🎀</p>
+            <h1>Happy Birthday Bestie 🎉<br>Click to open your surprise 🎀</h1>
             <button onclick="openCard()">Open Card</button>
         </div>
         <div class="side back">
-            <h2>Dear Bestie,</h2>
-            <p>
-            Who knew a random coincidence online would turn into almost a year of pure friendship?  
-            You’re one of the strongest, most hardworking people I know — a true hustler.  
-            From late-night chats to silly memes, every moment with you has been special.  
-            Keep shining and chasing your dreams, I’m always rooting for you! 💫
+            <h2>Dear Bestie 💌</h2>
+            <p class="message">
+                Who knew a cute coincidence online would turn into almost a year of pure madness & friendship?  
+                You’re a real hustler — hardworking, strong, and full of dreams.  
+                From random memes to heartfelt talks, every chat with you is a highlight.  
+                Keep shining, keep hustling, and remember — I’m always rooting for you from my side of the screen.  
+                Here’s to more laughs, late-night talks, and crazy moments! 💫
             </p>
-            <div class="song">
-                <iframe width="100%" height="100" src="https://mobcup.com.co/aage-rahiyo-na-peeche-rahiyo-sang-rahiyo-ringtone-download-rw4t2ga" frameborder="0"></iframe>
-            </div>
-            <div class="gallery">
-                <img src="https://via.placeholder.com/100?text=Memory+1">
-                <img src="https://via.placeholder.com/100?text=Memory+2">
-                <img src="https://via.placeholder.com/100?text=Memory+3">
+            <div class="scrapbook">
+                {% for idx in range(1,9) %}
+                <div class="item" style="--i:{{ loop.index }}; --color: {{ colors[loop.index0 % colors|length] }}">
+                    <img src="/media/{{ idx }}.jpg" alt="Photo {{ idx }}">
+                </div>
+                {% endfor %}
+                {% for idx in range(1,5) %}
+                <div class="item" style="--i:{{ loop.index }}; --color: {{ colors[(loop.index0+3) % colors|length] }}">
+                    <video src="/media/{{ idx }}.mp4" controls muted></video>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
 function openCard(){
     document.getElementById("card").classList.add("open");
     launchConfetti();
 }
-
 function launchConfetti(){
     const duration = 2 * 1000;
     const end = Date.now() + duration;
-
     (function frame() {
-        const colors = ['#ff90d4', '#ffd166', '#8fe3ff', '#b0ffb4'];
         confetti({
             particleCount: 5,
             angle: 60,
             spread: 55,
-            origin: { x: 0 },
-            colors: colors
+            origin: { x: 0 }
         });
         confetti({
             particleCount: 5,
             angle: 120,
             spread: 55,
-            origin: { x: 1 },
-            colors: colors
+            origin: { x: 1 }
         });
-
         if (Date.now() < end) {
             requestAnimationFrame(frame);
         }
     }());
 }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 </body>
 </html>
@@ -157,7 +166,12 @@ function launchConfetti(){
 
 @app.route("/")
 def home():
-    return render_template_string(HTML)
+    colors = ["#ff90d4", "#ffd166", "#8fe3ff", "#b0ffb4", "#ffb3ec", "#b3c7ff"]
+    return render_template_string(HTML, colors=colors)
+
+@app.route("/media/<path:filename>")
+def media(filename):
+    return send_from_directory(os.path.dirname(__file__), filename)
 
 if __name__ == "__main__":
     app.run(debug=True)
