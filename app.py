@@ -3,8 +3,9 @@ import os, urllib.parse
 
 app = Flask(__name__)
 
+# ------- helpers (safe, no unterminated strings) -------
 def placeholder_svg(text: str) -> str:
-    # Safe single-line f-strings (no unterminated string issue)
+    # simple SVG placeholder for missing images
     return (
         f"<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'>"
         f"<rect width='100%' height='100%' fill='%23e9e9ef'/>"
@@ -14,17 +15,17 @@ def placeholder_svg(text: str) -> str:
     )
 
 def enc_svg(label: str) -> str:
-    # URL-encode the SVG so it can be used in a data URI
     return urllib.parse.quote(placeholder_svg(label))
 
+# ------- page HTML/CSS/JS (fully closed r-string) -------
 HTML = r"""
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>Happy Birthday, Bestie 🎀</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#ff90d4">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#ff90d4" />
 <style>
   :root{
     --bg1:#ffb3ec; --bg2:#b3c7ff;
@@ -176,7 +177,6 @@ HTML = r"""
   }
   .tear .edge{
     position:absolute; left:0; right:0; bottom:-1px; height:40px;
-    /* jagged edge (mask) — graceful if unsupported */
     -webkit-mask: url('#rip') 0/100% 100% no-repeat; mask: url('#rip') 0/100% 100% no-repeat;
     background: #fff; filter: drop-shadow(0 6px 6px #0002);
   }
@@ -202,7 +202,7 @@ HTML = r"""
 <canvas id="confetti"></canvas>
 <div class="sparkles" aria-hidden="true"></div>
 
-<!-- TEAR OVERLAY (hidden SVG defines the jagged mask) -->
+<!-- TEAR OVERLAY (mask def + sheet) -->
 <svg width="0" height="0" aria-hidden="true">
   <defs>
     <svg id="rip" viewBox="0 0 1200 200" preserveAspectRatio="none">
@@ -220,9 +220,7 @@ HTML = r"""
   </defs>
 </svg>
 <div class="tear" id="tear" aria-hidden="true">
-  <div class="sheet">
-    <div class="edge"></div>
-  </div>
+  <div class="sheet"><div class="edge"></div></div>
 </div>
 
 <div class="stage">
@@ -331,7 +329,7 @@ HTML = r"""
   const bgm = document.getElementById('bgm');
   const musicBtn = document.getElementById('musicBtn');
 
-  // Music controls
+  // Music toggle
   let musicOn = false;
   async function toggleMusic(forcePlay=false){
     try{
@@ -346,12 +344,10 @@ HTML = r"""
   musicBtn.addEventListener('click', ()=>toggleMusic());
 
   openBtn.addEventListener('click', async () => {
-    // page tear then flip
-    tear.classList.add('run');
-    setTimeout(()=> card.classList.add('open'), 180);
+    tear.classList.add('run');                 // page tear
+    setTimeout(()=> card.classList.add('open'), 180); // flip
     confettiBurst();
-    // try to start music softly
-    bgm.volume = 0.5; toggleMusic(true);
+    bgm.volume = 0.5; toggleMusic(true);       // try to start music
     setTimeout(()=> { tear.style.display='none'; }, 1600);
   });
 
@@ -364,7 +360,7 @@ HTML = r"""
     }());
   }
 
-  /* ======= Microphone + blow detection (optional) ======= */
+  /* ======= Microphone + blow detection ======= */
   let audioCtx, analyser, micStream, rafId, baseline = 0.02, threshold = 0.12, listening=false, blown=false;
   const meterBar = document.getElementById('meterBar');
   const micStatus = document.getElementById('micStatus');
@@ -376,7 +372,6 @@ HTML = r"""
   relightBtn.addEventListener('click', relightCandles);
   calibrateBtn.addEventListener('click', calibrateNoise);
 
-  // Enable mic on first interaction (music click or card open suffices for gesture)
   async function enableMic(){
     try{
       if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
@@ -395,8 +390,7 @@ HTML = r"""
       micStatus.textContent = "Mic blocked/unavailable. Use the button to blow out.";
     }
   }
-
-  // try to enable on open or music press
+  // enable mic on first interaction
   openBtn.addEventListener('click', enableMic, {once:true});
   musicBtn.addEventListener('click', enableMic, {once:true});
 
@@ -443,4 +437,6 @@ HTML = r"""
   function extinguishCandles(){
     blown = true; listening = false;
     flames.forEach(f => f.classList.add('out'));
-    smokes.forEach((s, i) => setTimeout(()=>{ s.cla
+    smokes.forEach((s, i) => setTimeout(()=>{ s.classList.add('show'); setTimeout(()=>s.classList.remove('show'), 1200); }, 60*i));
+    confettiBurst();
+    micStatus.textContent = 
