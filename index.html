@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Happy Birthday, Bestie 🎀</title>
+<meta name="theme-color" content="#f7d9e3">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Reset & Base */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,sans-serif;background:#fefaf6;overflow-x:hidden;color:#333}
+
+/* Page Tear */
+.tear{position:fixed;inset:0;z-index:99;display:grid;place-items:stretch;pointer-events:none}
+.sheet{background:#fff;border-bottom:0;border:1px solid #ccc;height:55vh;box-shadow:0 40px 70px rgba(0,0,0,.25);transform:translateY(0);transition:transform 1s ease}
+.run .sheet{transform:translateY(-70vh)}
+
+/* Cake */
+.cake{width:200px;margin:auto;display:block}
+.flame{animation:flicker .15s infinite alternate}
+@keyframes flicker{from{transform:scale(1)}to{transform:scale(.92)translateY(1px)}}
+.flame.out{opacity:0;animation:none}
+
+/* Gallery */
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;overflow-y:auto;height:300px;padding:10px}
+.gallery img,.gallery video{width:100%;border-radius:10px;cursor:pointer}
+
+/* Envelope */
+.envelope{width:300px;height:200px;position:relative;perspective:1000px;margin:auto;cursor:pointer}
+.env-body{background:white;width:100%;height:100%;border-radius:10px;position:absolute}
+.flap{background:#eee;width:100%;height:50%;position:absolute;top:0;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .5s}
+.letter{background:#fff;color:black;padding:10px;position:absolute;top:20%;left:10%;width:80%;height:60%;overflow:auto;border-radius:8px;transform:translateY(100%);transition:transform .5s}
+.envelope.open .flap{transform:rotateX(180deg)}
+.envelope.open .letter{transform:translateY(0)}
+
+/* Lightbox */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;justify-content:center;align-items:center;z-index:100}
+.lightbox.open{display:flex}
+.lightbox-content img,.lightbox-content video{max-width:90%;max-height:90%;border-radius:10px}
+
+/* Buttons */
+.btn{padding:8px 14px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;margin:5px}
+.primary{background:#ffd166;color:black}
+.secondary{background:#eee;color:black}
+</style>
+</head>
+<body>
+
+<div class="tear" id="tear"><div class="sheet"></div></div>
+
+<header style="text-align:center;padding:20px">
+  <h1>Happy Birthday, <span style="color:#f48fb1">Bestie</span> 🎉</h1>
+  <button class="btn primary" id="enableMicBtn">Enable Microphone 🎤</button>
+</header>
+
+<section style="text-align:center">
+  <h2>Blow out the candles 🎂</h2>
+  <svg class="cake" viewBox="0 0 200 200">
+    <rect x="40" y="100" width="120" height="60" rx="10" fill="#f48fb1" />
+    <g id="candles">
+      <g transform="translate(60,80)">
+        <rect width="10" height="20" fill="#ffd166"/>
+        <ellipse class="flame" cx="5" cy="-5" rx="3" ry="6" fill="orange"/>
+      </g>
+      <g transform="translate(90,80)">
+        <rect width="10" height="20" fill="#ffd166"/>
+        <ellipse class="flame" cx="5" cy="-5" rx="3" ry="6" fill="orange"/>
+      </g>
+      <g transform="translate(120,80)">
+        <rect width="10" height="20" fill="#ffd166"/>
+        <ellipse class="flame" cx="5" cy="-5" rx="3" ry="6" fill="orange"/>
+      </g>
+    </g>
+  </svg>
+  <div>
+    <div style="background:#ddd;height:8px;border-radius:5px;overflow:hidden;width:200px;margin:auto">
+      <div id="meterBar" style="height:100%;width:0;background:linear-gradient(90deg,#ffd166,#ff9ad0)"></div>
+    </div>
+    <div id="micStatus">Mic not enabled.</div>
+    <button class="btn secondary" id="manualBlowBtn">Blow out now</button>
+    <button class="btn secondary" id="relightBtn" style="display:none">Relight candles</button>
+  </div>
+</section>
+
+<section style="text-align:center;margin-top:30px">
+  <h2>Open your letter 💌</h2>
+  <div class="envelope" id="envelope">
+    <div class="env-body"></div>
+    <div class="flap"></div>
+    <div class="letter">Happy Birthday! 🎉<br><br>From silly memes to deep talks — you’re my comfort place online.<br>Blow your candles & make a wish! 🫶</div>
+  </div>
+</section>
+
+<section style="margin-top:30px">
+  <h2 style="text-align:center">Memories 📸🎥</h2>
+  <div class="gallery" id="gallery"></div>
+</section>
+
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-content" id="lightboxContent"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+const files=["1.jpg","2.jpg","3.jpg","4.jpg","5.jpg","6.jpg","7.jpg","8.jpg","1.mp4","2.mp4","3.mp4","4.mp4"];
+const gallery=document.getElementById('gallery');
+files.forEach(f=>{
+  let el;
+  if(f.endsWith('.mp4')){
+    el=document.createElement('video');
+    el.src=f;el.autoplay=true;el.loop=true;el.muted=true;el.playsInline=true;
+  } else {
+    el=document.createElement('img');
+    el.src=f;
+  }
+  el.addEventListener('click',()=>openLightbox(f));
+  gallery.appendChild(el);
+});
+let dir=1;
+function autoScroll(){
+  gallery.scrollTop+=dir*0.5;
+  if(gallery.scrollTop+gallery.clientHeight>=gallery.scrollHeight)dir=-1;
+  if(gallery.scrollTop<=0)dir=1;
+  requestAnimationFrame(autoScroll);
+}
+autoScroll();
+
+const lb=document.getElementById('lightbox');
+const lbContent=document.getElementById('lightboxContent');
+function openLightbox(src){
+  lbContent.innerHTML="";
+  if(src.endsWith('.mp4')){
+    let v=document.createElement('video');
+    v.src=src;v.controls=true;v.autoplay=true;
+    lbContent.appendChild(v);
+  } else {
+    let i=document.createElement('img');
+    i.src=src;
+    lbContent.appendChild(i);
+  }
+  lb.classList.add('open');
+}
+lb.addEventListener('click',()=>lb.classList.remove('open'));
+
+document.getElementById('envelope').addEventListener('click',function(){
+  this.classList.toggle('open');
+});
+
+let audioCtx, analyser, micStream, rafId, threshold=0.12, listening=false, blown=false;
+const meterBar=document.getElementById('meterBar');
+const micStatus=document.getElementById('micStatus');
+document.getElementById('enableMicBtn').addEventListener('click',enableMic);
+document.getElementById('manualBlowBtn').addEventListener('click',blowCandles);
+document.getElementById('relightBtn').addEventListener('click',relightCandles);
+
+async function enableMic(){
+  try{
+    if(!navigator.mediaDevices){micStatus.textContent="Mic not supported";return;}
+    if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    await audioCtx.resume();
+    micStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const source=audioCtx.createMediaStreamSource(micStream);
+    analyser=audioCtx.createAnalyser();analyser.fftSize=1024;source.connect(analyser);
+    listening=true;blown=false;micStatus.textContent="Listening... blow!";
+    startLoop();
+  }catch(e){micStatus.textContent="Mic blocked";}
+}
+function startLoop(){
+  cancelAnimationFrame(rafId);
+  const data=new Uint8Array(analyser.fftSize);let over=0;
+  (function loop(){
+    analyser.getByteTimeDomainData(data);
+    const vol=rms(data);meterBar.style.width=(vol*200)+"%";
+    if(listening && !blown){
+      if(vol>threshold)over++; else over=Math.max(0,over-1);
+      if(over>5)blowCandles();
+    }
+    rafId=requestAnimationFrame(loop);
+  })();
+}
+function rms(buf){let sum=0;for(let v of buf){v=(v-128)/128;sum+=v*v}return Math.sqrt(sum/buf.length);}
+function blowCandles(){
+  blown=true;listening=false;
+  document.querySelectorAll('.flame').forEach(f=>f.classList.add('out'));
+  confetti();
+  micStatus.textContent="Candles out! 🎉";
+  document.getElementById('relightBtn').style.display='inline-block';
+}
+function relightCandles(){
+  blown=false;listening=true;
+  document.querySelectorAll('.flame').forEach(f=>f.classList.remove('out'));
+  micStatus.textContent="Relit 🔥 blow again!";
+  document.getElementById('relightBtn').style.display='none';
+}
+</script>
+</body>
+</html>
