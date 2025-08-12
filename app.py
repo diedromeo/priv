@@ -1,7 +1,21 @@
 from flask import Flask, send_from_directory, render_template_string
-import os
+import os, urllib.parse
 
 app = Flask(__name__)
+
+def placeholder_svg(text: str) -> str:
+    # Safe single-line f-strings (no unterminated string issue)
+    return (
+        f"<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'>"
+        f"<rect width='100%' height='100%' fill='%23e9e9ef'/>"
+        f"<text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' "
+        f"font-family='Segoe UI' font-size='20' fill='%23999'>{text}</text>"
+        f"</svg>"
+    )
+
+def enc_svg(label: str) -> str:
+    # URL-encode the SVG so it can be used in a data URI
+    return urllib.parse.quote(placeholder_svg(label))
 
 HTML = r"""
 <!DOCTYPE html>
@@ -128,9 +142,7 @@ HTML = r"""
   }
   .meter{ height:8px; background:#0001; border-radius:999px; overflow:hidden; margin:6px 0 6px }
   .meter .bar{ height:100%; width:0%; background:linear-gradient(90deg,#ff9ad0,#ffd166) }
-  .cake{
-    width:220px; margin:8px auto 6px; display:block;
-  }
+  .cake{ width:220px; margin:8px auto 6px; display:block; }
   .flame{ transform-origin:center; animation: flicker .15s infinite alternate; }
   @keyframes flicker{ from{transform:scale(1) translateY(0)} to{transform:scale(.92) translateY(1px)} }
   .flame.out{ opacity:0; filter: blur(1px); animation:none; transition: opacity .3s ease }
@@ -164,6 +176,7 @@ HTML = r"""
   }
   .tear .edge{
     position:absolute; left:0; right:0; bottom:-1px; height:40px;
+    /* jagged edge (mask) — graceful if unsupported */
     -webkit-mask: url('#rip') 0/100% 100% no-repeat; mask: url('#rip') 0/100% 100% no-repeat;
     background: #fff; filter: drop-shadow(0 6px 6px #0002);
   }
@@ -232,12 +245,12 @@ HTML = r"""
           <span class="tape">For my online bestie</span>
           <h2>Dear You,</h2>
           <p class="note">
-            Who knew one tiny moment online would turn into this much comfort?  
-            You’re a proper hustler — hardworking, strong, and full of heart.  
-            The way you show up for your goals inspires me, yaar.  
-            Today, keep the to-do aside and soak in the love.  
-            May this year bring new wins, calmer mornings, louder laughs, and that extra glow you deserve.  
-            I’m always cheering for you from my side of the screen.  
+            Who knew one tiny moment online would turn into this much comfort?<br>
+            You’re a proper hustler — hardworking, strong, and full of heart.<br>
+            The way you show up for your goals inspires me, yaar.<br><br>
+            Today, keep the to-do aside and soak in the love.
+            May this year bring new wins, calmer mornings, louder laughs, and that extra glow you deserve.
+            I’m always cheering for you from my side of the screen.
             Happy Birthday, bestie. Make a big wish — the universe is listening. 💫
           </p>
           <p class="note" style="margin-top:12px">
@@ -288,7 +301,7 @@ HTML = r"""
           {% for i in range(1,9) %}
             <figure class="polaroid" style="--rot: {{ (-6 + (i%5)*3) }}deg; --clr: {{ colors[(i-1) % colors|length] }}">
               <img loading="lazy" src="/media/{{ i }}.jpg" alt="Photo {{ i }}"
-                   onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,{{ placeholder_svg('Photo%20'+str(i)) }}'">
+                   onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,{{ placeholder_svg('Photo ' + str(i)) }}'">
               <figcaption class="label">Memory {{ i }}</figcaption>
             </figure>
           {% endfor %}
@@ -430,23 +443,4 @@ HTML = r"""
   function extinguishCandles(){
     blown = true; listening = false;
     flames.forEach(f => f.classList.add('out'));
-    smokes.forEach((s, i) => setTimeout(()=>{ s.classList.add('show'); setTimeout(()=>s.classList.remove('show'), 1200); }, 60*i));
-    confettiBurst();
-    micStatus.textContent = "Candles out! Make a wish 🎉";
-    relightBtn.style.display='inline-block';
-  }
-  function relightCandles(){
-    blown = false; listening = true;
-    flames.forEach(f => f.classList.remove('out'));
-    micStatus.textContent = "Relit 🔥 — blow again!";
-    relightBtn.style.display='none';
-  }
-</script>
-</body>
-</html>
-"""
-
-def placeholder_svg(text: str) -> str:
-    # tiny inline SVG placeholder with label
-    return (f"<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'>"
-            f"<rect width='100%'
+    smokes.forEach((s, i) => setTimeout(()=>{ s.cla
