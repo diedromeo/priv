@@ -11,7 +11,7 @@
 :root{
   --primary:#6c8cff; --accent:#ffd166;
   --bg1:#0f1024; --bg2:#2a1758; --bg3:#5b2da6;
-  --paper:#fff7fb; --ink:#231a21;
+  --paper:#fff7fb; --ink:#241a21;
 }
 *{box-sizing:border-box} html,body{height:100%}
 body{
@@ -23,26 +23,21 @@ body{
   overflow-x:hidden;
 }
 .container{max-width:980px;margin:0 auto;padding:20px}
-
 h1{margin:18px 0 8px;font-size:clamp(28px,6vw,56px)}
 .sub{opacity:.9;margin:0 0 10px}
-
-/* Card shells */
 .card{
   background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
   border:1px solid rgba(255,255,255,.12);
   border-radius:20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
+  box-shadow:0 10px 30px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
   backdrop-filter: blur(10px);
 }
-
-/* Buttons */
 .btn{appearance:none;border:0;border-radius:12px;padding:12px 16px;font-weight:800;cursor:pointer;margin:6px 8px 0 0}
 .btn.primary{background:var(--accent);color:#201414;box-shadow:0 10px 20px rgba(255,209,102,.35)}
 .btn.secondary{background:#e7ebff;color:#151a3a;box-shadow:0 10px 20px rgba(108,140,255,.28)}
 .btn.ghost{background:transparent;color:#fff;border:1px dashed rgba(255,255,255,.4)}
 
-/* Cake */
+/* cake */
 #cake-zone{padding:24px}
 .cake-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:center}
 @media (max-width:900px){.cake-wrap{grid-template-columns:1fr}}
@@ -58,21 +53,19 @@ h1{margin:18px 0 8px;font-size:clamp(28px,6vw,56px)}
 .hint{font-size:14px;opacity:.85;margin:6px 0 10px}
 .status{font-weight:700}
 
-/* Film roll column (hidden before blow) */
+/* film roll */
 #roll-zone{display:none;margin-top:18px;padding:16px}
 .roll-wrap{max-height:70vh;overflow:auto;scroll-behavior:smooth}
 .vertical-roll{display:flex;flex-direction:column;gap:14px}
-
-/* frame item */
-.frame{
-  position:relative;width:min(520px,94vw);margin:0 auto;border-radius:16px;overflow:hidden;
-  box-shadow:0 14px 30px rgba(0,0,0,.28);background:#000;
-}
+.frame{position:relative;width:min(520px,94vw);margin:0 auto;border-radius:16px;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.28);background:#000}
 .frame img,.frame video{display:block;width:100%;height:auto;object-fit:cover}
 .frame video{max-height:640px}
 .frame svg.film{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+/* controls row under roll */
+.roll-controls{display:flex;gap:10px;justify-content:center;align-items:center;margin-top:10px}
+.roll-controls .btn{padding:10px 14px}
 
-/* Greeting card / envelope (appears last) */
+/* letter */
 #letter{display:none;margin-top:18px;padding:20px}
 .envelope{position:relative;width:min(520px,92vw);height:320px;margin:0 auto;cursor:pointer;perspective:1200px}
 .env-body{position:absolute;inset:0;background:linear-gradient(160deg,#e7ebff,#fff);border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.28)}
@@ -95,13 +88,13 @@ footer{text-align:center;padding:28px 12px 42px;opacity:.78;font-size:13px}
   <h1>Happy Birthday, <span style="background:linear-gradient(90deg,#e0e7ff,#ffe37b,#e0e7ff);-webkit-background-clip:text;background-clip:text;color:transparent">Bestie</span> 🎉</h1>
   <p class="sub">Blow the candles first — then the memories slide down like an old film roll 🎞️</p>
   <div>
-    <button class="btn primary" id="startBtn">Start & enable mic 🎤</button>
-    <button class="btn secondary" id="manualBlowBtn">Blow out now ✨</button>
+    <button class="btn primary" id="scrollBtn">Go to cake ✨</button>
+    <button class="btn secondary" id="micBtn">Enable Microphone 🎤</button>
     <span class="btn ghost" style="pointer-events:none">🔒 mic stays on this device</span>
   </div>
 </div>
 
-<section id="cake-zone" class="container card">
+<section id="cake-zone" class="container card" aria-label="Birthday cake">
   <div class="cake-wrap">
     <div>
       <svg class="cake-svg" viewBox="0 0 520 360" role="img" aria-label="Birthday cake with five candles">
@@ -127,22 +120,28 @@ footer{text-align:center;padding:28px 12px 42px;opacity:.78;font-size:13px}
       </svg>
     </div>
     <div>
-      <p class="hint">Tap “Start & enable mic” → allow permission → blow towards your mic. If mic isn’t available, use the button.</p>
+      <p class="hint">Tap “Enable Microphone” → allow → blow towards your mic. (HTTPS recommended)</p>
       <div class="meter"><div id="meterBar" class="bar"></div></div>
-      <div id="micStatus" class="status">Waiting to start…</div>
+      <div id="micStatus" class="status">Mic not enabled.</div>
+      <button class="btn" id="relightBtn" style="display:none">Relight candles 🔥</button>
+      <!-- music fallback button (hidden unless autoplay fails) -->
+      <button class="btn secondary" id="musicBtn" style="display:none;margin-left:0">▶️ Play music</button>
     </div>
   </div>
 </section>
 
-<!-- film roll column (appears after blow) -->
 <section id="roll-zone" class="container card" aria-label="Film roll memories">
   <h2 style="margin:8px 0 12px">Memories 🎞️</h2>
   <div class="roll-wrap" id="rollWrap">
     <div class="vertical-roll" id="roll"></div>
   </div>
+  <div class="roll-controls">
+    <button class="btn secondary" id="pauseScrollBtn">Pause scroll</button>
+    <button class="btn secondary" id="resumeScrollBtn" disabled>Resume scroll</button>
+    <span class="btn ghost" style="pointer-events:none">Tip: You can always scroll with your finger.</span>
+  </div>
 </section>
 
-<!-- greeting card appears last -->
 <section id="letter" class="container card" aria-label="Greeting card">
   <h2 style="text-align:center;margin-top:4px">A small note 💌</h2>
   <div class="envelope" id="envelope" role="button" aria-expanded="false" aria-label="Open letter" tabindex="0">
@@ -150,9 +149,9 @@ footer{text-align:center;padding:28px 12px 42px;opacity:.78;font-size:13px}
     <div class="flap"></div>
     <div class="letter-card">
       <p style="margin:0;line-height:1.7">
-        Who knew one tiny online coincidence could turn into comfort this big?  
-        You’re strong, hardworking, and the sweetest kind of chaos.  
-        Make a huge wish — the universe is listening. I’m always cheering for you. ✨
+        Who knew one tiny online coincidence could turn into comfort this big?
+        You’re strong, hardworking, and the sweetest kind of chaos. Make a huge wish —
+        the universe is listening. I’m always cheering for you. ✨
       </p>
     </div>
     <div class="seal" aria-hidden="true">⭐️</div>
@@ -160,37 +159,34 @@ footer{text-align:center;padding:28px 12px 42px;opacity:.78;font-size:13px}
   <p class="hint" style="text-align:center;margin:10px 0 16px">Tap the envelope to open/close</p>
 </section>
 
-<footer>Made with 🫶 by you • Mic needs HTTPS or permission • Videos play muted by default</footer>
+<footer>Made with 🫶 by you • Videos auto-play muted • Mic & audio may need permission/HTTPS</footer>
+
+<!-- hidden bg music -->
+<audio id="bgm" src="song.mp3" preload="auto"></audio>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
-/* -------------- MEDIA LIST --------------
-   Place these files next to index.html:
-   - Images: 1.png..13.png (or .jpg)
-   - Videos: 1.mp4..4.mp4
------------------------------------------*/
-const IMAGE_COUNT = 13;
-const VIDEO_COUNT = 4;
+/* ===== config ===== */
+const IMAGE_COUNT = 13;  // 1.png..13.png (falls back to .jpg)
+const VIDEO_COUNT = 4;   // 1.mp4..4.mp4
+const SCROLL_SPEED = 2.1; // ~3x earlier
 
-/* state */
+/* ===== cake + mic ===== */
 let audioCtx, analyser, micStream, rafId, baseline=0.02, threshold=0.12, listening=false, blown=false;
 const meterBar = document.getElementById('meterBar');
 const micStatus = document.getElementById('micStatus');
+const relightBtn = document.getElementById('relightBtn');
 
-/* start & mic permission (must be on a user gesture) */
-document.getElementById('startBtn').addEventListener('click', async ()=>{
-  // page focuses cake; also tries to enable mic
+document.getElementById('scrollBtn').addEventListener('click',()=>{
   document.getElementById('cake-zone').scrollIntoView({behavior:'smooth'});
-  await enableMic();
 });
+document.getElementById('micBtn').addEventListener('click', enableMic);
+relightBtn.addEventListener('click', relightCandles);
 
-document.getElementById('manualBlowBtn').addEventListener('click', extinguishCandles);
-
-/* microphone */
 async function enableMic(){
   try{
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      micStatus.textContent="Mic not supported in this browser. Use the button to blow out.";
+      micStatus.textContent="Mic not supported by this browser.";
       return;
     }
     if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
@@ -201,11 +197,11 @@ async function enableMic(){
     listening=true; blown=false; micStatus.textContent="Listening… blow towards the mic!";
     startLoop(); calibrateNoise();
   }catch(e){
-    micStatus.textContent="Mic blocked/unavailable. Tap “Allow” or use the button.";
+    micStatus.textContent="Mic blocked/unavailable. Tap Allow above.";
   }
 }
 function calibrateNoise(){
-  if(!analyser){ return; }
+  if(!analyser) return;
   const data=new Uint8Array(analyser.fftSize); let samples=0,sum=0; const t0=performance.now();
   (function step(){
     analyser.getByteTimeDomainData(data); const v=rms(data); sum+=v; samples++;
@@ -226,22 +222,35 @@ function startLoop(){
 }
 function rms(buf){ let s=0; for(let i=0;i<buf.length;i++){ const v=(buf[i]-128)/128; s+=v*v } return Math.sqrt(s/buf.length) }
 
-/* candle actions */
 const flames = [...document.querySelectorAll('.flame')];
 const smokes = [...document.querySelectorAll('.smoke')];
 
-function extinguishCandles(){
+async function extinguishCandles(){
   if(blown) return;
   blown = true; listening=false;
   flames.forEach(f=>f.classList.add('out'));
   smokes.forEach((s,i)=> setTimeout(()=>{ s.classList.add('show'); setTimeout(()=>s.classList.remove('show'),1100); }, 60*i));
-  fireworks();                   // confetti
-  revealFilmRoll();              // show film roll
-  setTimeout(()=> revealLetter(), 1200); // show greeting card a bit later
+  fireworks();
+  // try to start music
+  tryPlayMusic();
+  revealFilmRoll();
+  setTimeout(()=> revealLetter(), 1200);
   micStatus.textContent="Candles out! Make a wish 🎉";
+  relightBtn.style.display='inline-block';
 }
+
+function relightCandles(){
+  blown=false; listening=true;
+  flames.forEach(f=>f.classList.remove('out'));
+  micStatus.textContent="Relit 🔥 — blow again!";
+  relightBtn.style.display='none';
+  // stop/pause music if playing
+  const a = document.getElementById('bgm');
+  if(!a.paused){ a.pause(); a.currentTime = 0; }
+}
+
 function fireworks(){
-  const end = Date.now()+1400;
+  const end = Date.now()+1600;
   (function frame(){
     confetti({particleCount:10,angle:60, spread:60, origin:{x:0}});
     confetti({particleCount:10,angle:120,spread:60, origin:{x:1}});
@@ -249,50 +258,83 @@ function fireworks(){
   })();
 }
 
-/* build film roll (images first, then videos) */
-function revealFilmRoll(){
-  const zone = document.getElementById('roll-zone');
-  const roll = document.getElementById('roll');
-  zone.style.display='block';
-
-  // IMAGES 1..13 (try .png then fallback to .jpg)
-  for(let i=1;i<=IMAGE_COUNT;i++){
-    const item = makeFrame();
-    const img = document.createElement('img');
-    img.src = `${i}.png`;
-    img.alt = `Photo ${i}`;
-    img.onerror = ()=>{ img.onerror=null; img.src=`${i}.jpg`; };
-    item.querySelector('.mediaSlot').appendChild(img);
-    roll.appendChild(item);
+/* ===== BG MUSIC ===== */
+const musicBtn = document.getElementById('musicBtn');
+async function tryPlayMusic(){
+  const a = document.getElementById('bgm');
+  a.loop = true; // keep mood 🫶
+  try{
+    await a.play();             // may succeed if there was a prior gesture
+    musicBtn.style.display='none';
+  }catch(err){
+    // autoplay blocked → show a small button to let her tap once
+    musicBtn.style.display='inline-block';
+    musicBtn.onclick = async ()=>{ try{ await a.play(); musicBtn.style.display='none'; }catch(e){} };
   }
-  // VIDEOS 1..4
-  for(let v=1; v<=VIDEO_COUNT; v++){
-    const item = makeFrame();
-    const vid = document.createElement('video');
-    vid.src = `${v}.mp4`;
-    vid.autoplay = true; vid.muted = true; vid.loop = true; vid.playsInline = true; // autoplay mobile-safe
-    item.querySelector('.mediaSlot').appendChild(vid);
-    roll.appendChild(item);
-  }
-
-  // start gentle auto-scroll
-  const wrap = document.getElementById('rollWrap');
-  let dir=1; (function autoScroll(){
-    wrap.scrollTop += dir*0.7;
-    const atBottom = Math.abs((wrap.scrollHeight - wrap.clientHeight) - wrap.scrollTop) < 2;
-    const atTop = wrap.scrollTop <= 0;
-    if(atBottom) dir=-1; if(atTop) dir=1;
-    requestAnimationFrame(autoScroll);
-  })();
 }
 
-/* film frame builder (SVG overlay sides + media slot) */
-function makeFrame(){
-  const fig = document.createElement('div');
-  fig.className = 'frame';
-  const slot = document.createElement('div'); slot.className='mediaSlot';
-  fig.appendChild(slot);
+/* ===== film roll ===== */
+const rollWrap = document.getElementById('rollWrap');
+const roll = document.getElementById('roll');
+let autoScrollId=null, autoPaused=false;
 
+function revealFilmRoll(){
+  document.getElementById('roll-zone').style.display='block';
+
+  // build frames once
+  if(!roll.hasChildNodes()){
+    for(let i=1;i<=IMAGE_COUNT;i++){
+      const fig = makeFrame();
+      const img = document.createElement('img');
+      img.src = `${i}.png`; img.alt=`Photo ${i}`;
+      img.onerror = ()=>{ img.onerror=null; img.src=`${i}.jpg`; };
+      fig.querySelector('.slot').appendChild(img);
+      roll.appendChild(fig);
+    }
+    for(let v=1; v<=VIDEO_COUNT; v++){
+      const fig = makeFrame();
+      const vid = document.createElement('video');
+      vid.src = `${v}.mp4`; vid.autoplay = true; vid.muted = true; vid.loop = true; vid.playsInline = true;
+      fig.querySelector('.slot').appendChild(vid);
+      roll.appendChild(fig);
+    }
+  }
+  startAutoScroll();
+}
+
+/* faster auto-scroll; pause on user interaction for 6s */
+function startAutoScroll(){
+  if(autoScrollId) cancelAnimationFrame(autoScrollId);
+  let dir=1;
+  function step(){
+    if(!autoPaused){
+      rollWrap.scrollTop += dir * SCROLL_SPEED;
+      const atBottom = Math.abs((rollWrap.scrollHeight - rollWrap.clientHeight) - rollWrap.scrollTop) < 2;
+      const atTop = rollWrap.scrollTop <= 0;
+      if(atBottom) dir=-1; if(atTop) dir=1;
+    }
+    autoScrollId = requestAnimationFrame(step);
+  }
+  step();
+}
+function pauseTemp(){
+  autoPaused = true;
+  setTimeout(()=> autoPaused=false, 6000);
+}
+['wheel','touchmove','mousedown','pointerdown','keydown'].forEach(ev=>{
+  rollWrap.addEventListener(ev, pauseTemp, {passive:true});
+});
+
+/* manual pause/resume buttons */
+const pauseBtn=document.getElementById('pauseScrollBtn');
+const resumeBtn=document.getElementById('resumeScrollBtn');
+pauseBtn.addEventListener('click',()=>{ autoPaused=true; pauseBtn.disabled=true; resumeBtn.disabled=false; });
+resumeBtn.addEventListener('click',()=>{ autoPaused=false; pauseBtn.disabled=false; resumeBtn.disabled=true; });
+
+/* film frame builder */
+function makeFrame(){
+  const fig = document.createElement('div'); fig.className='frame';
+  const slot = document.createElement('div'); slot.className='slot'; fig.appendChild(slot);
   const film = document.createElementNS('http://www.w3.org/2000/svg','svg');
   film.setAttribute('viewBox','0 0 300 400'); film.setAttribute('class','film');
   film.innerHTML = `
@@ -315,7 +357,7 @@ function makeFrame(){
   return fig;
 }
 
-/* letter reveal */
+/* letter */
 function revealLetter(){ document.getElementById('letter').style.display='block'; }
 const envelope = document.getElementById('envelope');
 envelope.addEventListener('click', ()=> envelope.classList.toggle('open'));
