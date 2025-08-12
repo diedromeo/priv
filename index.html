@@ -1,198 +1,375 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Happy Birthday, Bestie 🎀</title>
-<meta name="theme-color" content="#f7d9e3">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Happy Birthday, Bestie! 🎉</title>
+<meta name="theme-color" content="#6c8cff" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet" />
 <style>
-/* Reset & Base */
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,sans-serif;background:#fefaf6;overflow-x:hidden;color:#333}
+:root{
+  --primary:#6c8cff; --accent:#ffd166;
+  --ink:#241a21; --paper:#fff7fb;
+  --bg1:#10122a; --bg2:#2a1758; --bg3:#5b2da6;
+}
+*{box-sizing:border-box} html,body{height:100%}
+body{
+  margin:0; font-family:Poppins, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:#fff;
+  background:
+    radial-gradient(1200px 800px at 80% -10%, var(--bg3), transparent 60%),
+    radial-gradient(900px 700px at -10% 10%, var(--bg2), transparent 55%),
+    radial-gradient(1400px 900px at 50% 120%, var(--bg1), #0b0610);
+  overflow-x:hidden;
+}
+.hearts{position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.18;
+  background:
+    radial-gradient(8px 6px at 20% 30%, #fff, transparent 60%),
+    radial-gradient(7px 5px at 70% 20%, #fff, transparent 60%),
+    radial-gradient(6px 5px at 50% 75%, #fff, transparent 60%);
+  animation:twinkle 12s linear infinite; filter:blur(.5px);
+}
+@keyframes twinkle{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.container{max-width:1100px; margin:0 auto; padding:24px}
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.12); border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.1);
+  backdrop-filter: blur(10px);
+}
 
-/* Page Tear */
-.tear{position:fixed;inset:0;z-index:99;display:grid;place-items:stretch;pointer-events:none}
-.sheet{background:#fff;border-bottom:0;border:1px solid #ccc;height:55vh;box-shadow:0 40px 70px rgba(0,0,0,.25);transform:translateY(0);transition:transform 1s ease}
+/* hero */
+header.hero{position:relative; z-index:1; text-align:center; padding:56px 20px 28px}
+.hero h1{font-size:clamp(32px, 6vw, 64px); margin:0 0 12px; line-height:1.05; text-shadow:0 6px 24px rgba(108,140,255,.45)}
+.hero .name{background:linear-gradient(90deg, #e0e7ff, #ffe37b, #e0e7ff); -webkit-background-clip:text; background-clip:text; color:transparent}
+.tagline{opacity:.9; margin:0 auto 18px; max-width:780px}
+.cta-row{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:16px}
+.btn{appearance:none; border:0; padding:12px 18px; border-radius:12px; font-weight:700; cursor:pointer; color:#0e0e1a; background:var(--accent); box-shadow:0 8px 20px rgba(255,209,102,.35)}
+.btn.secondary{background:#e7ebff; box-shadow:0 8px 20px rgba(108,140,255,.25)}
+.btn.ghost{background:transparent; color:#fff; border:1px dashed rgba(255,255,255,.4)}
+.btn:active{transform:translateY(1px) scale(.99)}
+
+/* cake */
+#cake-zone{position:relative; z-index:1; padding:34px 18px 46px}
+.cake-wrap{display:grid; grid-template-columns:1.05fr .95fr; gap:24px; align-items:center}
+@media (max-width: 900px){.cake-wrap{grid-template-columns:1fr}}
+.cake-svg{width:100%; height:auto; display:block}
+.flame{transform-origin:center; animation:flicker .15s infinite alternate}
+@keyframes flicker{from{transform:scale(1) translateY(0)} to{transform:scale(.92) translateY(1px)}}
+.flame.out{opacity:0; filter:blur(2px); animation:none; transition:opacity .4s ease}
+.smoke{opacity:0; transition:opacity .6s ease}
+.smoke.show{opacity:1; animation:smokeUp 1.2s ease forwards}
+@keyframes smokeUp{0%{transform:translateY(0) scale(.8); opacity:.9} 100%{transform:translateY(-60px) scale(1.1); opacity:0}}
+.meter{height:10px; border-radius:999px; background:rgba(255,255,255,.12); overflow:hidden; margin:10px 0 6px}
+.meter .bar{height:100%; width:0%; background:linear-gradient(90deg, #a6b7ff, #ffd166)}
+.status{font-weight:700; margin-top:8px}
+.hint{font-size:14px; opacity:.85; margin:6px 0 12px}
+
+/* envelope */
+#letter{padding:34px 18px 52px}
+.envelope{position:relative; width:min(520px, 92vw); height:320px; margin:0 auto; cursor:pointer; perspective:1200px; outline:none}
+.env-body{position:absolute; inset:0; background:linear-gradient(160deg, #e7ebff, #fff); border-radius:14px; box-shadow:0 10px 40px rgba(0,0,0,.28)}
+.flap{position:absolute; left:0; right:0; top:0; height:52%; background:linear-gradient(160deg, #d6ddff, #f5f7ff); clip-path:polygon(0 0,100% 0,50% 100%); transform-origin:top; transition:transform .8s cubic-bezier(.2,.8,.2,1); border-top-left-radius:14px; border-top-right-radius:14px; border-bottom:1px solid rgba(0,0,0,.06)}
+.letter-card{position:absolute; left:50%; top:56%; transform:translate(-50%,-50%); width:86%; height:72%; background:var(--paper); color:var(--ink); border-radius:12px; padding:18px 18px 22px; box-shadow:0 10px 30px rgba(0,0,0,.18); transition:transform .8s cubic-bezier(.2,.8,.2,1); overflow:auto}
+.envelope.open .flap{transform:rotateX(180deg)} .envelope.open .letter-card{transform:translate(-50%,-58%)}
+.seal{position:absolute; left:50%; top:52%; transform:translate(-50%,-50%); width:54px; height:54px; border-radius:50%; background:var(--primary); box-shadow:0 6px 18px rgba(108,140,255,.45), inset 0 2px 0 rgba(255,255,255,.4); display:grid; place-items:center; color:#fff; font-weight:800; letter-spacing:.5px}
+
+/* gallery */
+#gallery{padding:34px 18px 60px}
+.grid{display:grid; grid-template-columns: repeat(3, 1fr); gap:14px}
+@media (max-width: 800px){.grid{grid-template-columns: repeat(2, 1fr)}}
+@media (max-width: 520px){.grid{grid-template-columns: 1fr}}
+.frame{position:relative; aspect-ratio:3/4; border-radius:16px; overflow:hidden; box-shadow:0 12px 26px rgba(0,0,0,.28); cursor:pointer}
+.frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+.frame svg.film{position:absolute; inset:0; width:100%; height:100%; pointer-events:none;}
+
+/* lightbox */
+.lightbox{position:fixed; inset:0; background:rgba(0,0,0,.8); display:none; place-items:center; z-index:60; padding:16px}
+.lightbox.open{display:grid}
+.lightbox img{max-width:92vw; max-height:86vh; border-radius:16px; border:1px solid rgba(255,255,255,.2)}
+
+/* tear overlay */
+#confetti{position:fixed; inset:0; pointer-events:none; z-index:50}
+.tear{position:fixed; inset:0; z-index:70; pointer-events:none; display:grid; place-items:stretch}
+.sheet{background:linear-gradient(#fff 0 0) padding-box,
+               repeating-linear-gradient(90deg,#0001 0 14px,#0000 14px 28px) border-box;
+       border:1px solid #0001; border-bottom:0; height:55vh; width:100%; align-self:start;
+       box-shadow:0 40px 70px rgba(0,0,0,.25); transform:translateY(0); transition:transform 1.2s cubic-bezier(.2,.8,.2,1)}
+.edge{position:absolute; left:0; right:0; bottom:-1px; height:40px;
+      -webkit-mask:url('#rip') 0/100% 100% no-repeat; mask:url('#rip') 0/100% 100% no-repeat; background:#fff; filter:drop-shadow(0 6px 6px #0002)}
 .run .sheet{transform:translateY(-70vh)}
 
-/* Cake */
-.cake{width:200px;margin:auto;display:block}
-.flame{animation:flicker .15s infinite alternate}
-@keyframes flicker{from{transform:scale(1)}to{transform:scale(.92)translateY(1px)}}
-.flame.out{opacity:0;animation:none}
-
-/* Gallery */
-.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;overflow-y:auto;height:300px;padding:10px}
-.gallery img,.gallery video{width:100%;border-radius:10px;cursor:pointer}
-
-/* Envelope */
-.envelope{width:300px;height:200px;position:relative;perspective:1000px;margin:auto;cursor:pointer}
-.env-body{background:white;width:100%;height:100%;border-radius:10px;position:absolute}
-.flap{background:#eee;width:100%;height:50%;position:absolute;top:0;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .5s}
-.letter{background:#fff;color:black;padding:10px;position:absolute;top:20%;left:10%;width:80%;height:60%;overflow:auto;border-radius:8px;transform:translateY(100%);transition:transform .5s}
-.envelope.open .flap{transform:rotateX(180deg)}
-.envelope.open .letter{transform:translateY(0)}
-
-/* Lightbox */
-.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;justify-content:center;align-items:center;z-index:100}
-.lightbox.open{display:flex}
-.lightbox-content img,.lightbox-content video{max-width:90%;max-height:90%;border-radius:10px}
-
-/* Buttons */
-.btn{padding:8px 14px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;margin:5px}
-.primary{background:#ffd166;color:black}
-.secondary{background:#eee;color:black}
+footer{text-align:center; padding:26px 12px 48px; opacity:.75; font-size:13px}
 </style>
 </head>
 <body>
+<div class="hearts" aria-hidden="true"></div>
+<canvas id="confetti"></canvas>
 
-<div class="tear" id="tear"><div class="sheet"></div></div>
+<!-- tear mask def -->
+<svg width="0" height="0" aria-hidden="true">
+  <defs>
+    <svg id="rip" viewBox="0 0 1200 200" preserveAspectRatio="none">
+      <path d="M0,0 H1200 V140
+               c-40,-20 -80,-20 -120,0
+               s-80,20 -120,0
+               s-80,-20 -120,0
+               s-80,20 -120,0
+               s-80,-20 -120,0
+               s-80,20 -120,0
+               s-80,-20 -120,0
+               s-80,20 -120,0
+               V0 Z" fill="#000"/>
+    </svg>
+  </defs>
+</svg>
 
-<header style="text-align:center;padding:20px">
-  <h1>Happy Birthday, <span style="color:#f48fb1">Bestie</span> 🎉</h1>
-  <button class="btn primary" id="enableMicBtn">Enable Microphone 🎤</button>
+<div class="tear" id="tear"><div class="sheet"><div class="edge"></div></div></div>
+
+<header class="hero container">
+  <h1>Happy Birthday, <span class="name" id="nameText">Bestie</span> 🎉</h1>
+  <p class="tagline">From screen to screen — open the letter, browse the photos, and blow out the candles! 💻🎂</p>
+  <div class="cta-row">
+    <button class="btn" id="scrollToCake">Start the surprise ✨</button>
+    <button class="btn secondary" id="enableMicBtn" aria-controls="micStatus">Enable microphone 🎤</button>
+    <span class="btn ghost" style="pointer-events:none">🔒 mic stays on this device</span>
+  </div>
 </header>
 
-<section style="text-align:center">
-  <h2>Blow out the candles 🎂</h2>
-  <svg class="cake" viewBox="0 0 200 200">
-    <rect x="40" y="100" width="120" height="60" rx="10" fill="#f48fb1" />
-    <g id="candles">
-      <g transform="translate(60,80)">
-        <rect width="10" height="20" fill="#ffd166"/>
-        <ellipse class="flame" cx="5" cy="-5" rx="3" ry="6" fill="orange"/>
-      </g>
-      <g transform="translate(90,80)">
-        <rect width="10" height="20" fill="#ffd166"/>
-        <ellipse class="flame" cx="5" cy="-5" rx="3" ry="6" fill="orange"/>
-      </g>
-      <g transform="translate(120,80)">
-        <rect width="10" height="20" fill="#ffd166"/>
-        <ellipse class="flame" cx="5" cy="-5" rx="3" ry="6" fill="orange"/>
-      </g>
-    </g>
-  </svg>
-  <div>
-    <div style="background:#ddd;height:8px;border-radius:5px;overflow:hidden;width:200px;margin:auto">
-      <div id="meterBar" style="height:100%;width:0;background:linear-gradient(90deg,#ffd166,#ff9ad0)"></div>
+<section id="cake-zone" class="container card">
+  <div class="cake-wrap">
+    <div class="cake-card">
+      <svg class="cake-svg" viewBox="0 0 520 360" role="img" aria-label="Birthday cake with five candles">
+        <defs>
+          <radialGradient id="icing" cx="50%" cy="20%" r="80%">
+            <stop offset="0%" stop-color="#e7ebff"/><stop offset="100%" stop-color="#cfd8ff"/>
+          </radialGradient>
+          <linearGradient id="cakeBody" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#b6bdfc"/><stop offset="100%" stop-color="#6c8cff"/>
+          </linearGradient>
+          <linearGradient id="wax" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#fff6a6"/><stop offset="100%" stop-color="#ffe37b"/>
+          </linearGradient>
+          <radialGradient id="flameGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#fffbd1"/><stop offset="60%" stop-color="#ffd166"/><stop offset="100%" stop-color="#ff7b00"/>
+          </radialGradient>
+          <radialGradient id="smokeGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffffffaa"/><stop offset="100%" stop-color="#ffffff00"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="260" cy="320" rx="180" ry="26" fill="#ffffff22"/>
+        <rect x="110" y="150" width="300" height="120" rx="18" fill="url(#cakeBody)" />
+        <path d="M120,160 h280 a16,16 0 0 1 16,16 v12
+                 q-24,24 -48,0 q-24,-24 -48,0 q-24,24 -48,0 q-24,-24 -48,0 q-24,24 -48,0 q-24,-24 -48,0 v-12
+                 a16,16 0 0 1 16,-16 z" fill="url(#icing)" />
+        <g id="candles">
+          <g transform="translate(140,120)"><rect width="16" height="60" rx="8" fill="url(#wax)"/><circle class="smoke" r="8" cx="8" cy="-16" fill="url(#smokeGrad)"/><ellipse class="flame" cx="8" cy="-8" rx="7" ry="12" fill="url(#flameGrad)"/></g>
+          <g transform="translate(200,120)"><rect width="16" height="60" rx="8" fill="url(#wax)"/><circle class="smoke" r="8" cx="8" cy="-16" fill="url(#smokeGrad)"/><ellipse class="flame" cx="8" cy="-8" rx="7" ry="12" fill="url(#flameGrad)"/></g>
+          <g transform="translate(260,120)"><rect width="16" height="60" rx="8" fill="url(#wax)"/><circle class="smoke" r="8" cx="8" cy="-16" fill="url(#smokeGrad)"/><ellipse class="flame" cx="8" cy="-8" rx="7" ry="12" fill="url(#flameGrad)"/></g>
+          <g transform="translate(320,120)"><rect width="16" height="60" rx="8" fill="url(#wax)"/><circle class="smoke" r="8" cx="8" cy="-16" fill="url(#smokeGrad)"/><ellipse class="flame" cx="8" cy="-8" rx="7" ry="12" fill="url(#flameGrad)"/></g>
+          <g transform="translate(380,120)"><rect width="16" height="60" rx="8" fill="url(#wax)"/><circle class="smoke" r="8" cx="8" cy="-16" fill="url(#smokeGrad)"/><ellipse class="flame" cx="8" cy="-8" rx="7" ry="12" fill="url(#flameGrad)"/></g>
+        </g>
+      </svg>
     </div>
-    <div id="micStatus">Mic not enabled.</div>
-    <button class="btn secondary" id="manualBlowBtn">Blow out now</button>
-    <button class="btn secondary" id="relightBtn" style="display:none">Relight candles</button>
+    <div class="controls" style="padding:8px 6px 18px;">
+      <h2 style="margin:2px 0 6px">Blow out the candles 🎂</h2>
+      <p class="hint">Click “Enable microphone”, then blow towards your mic. Or use the button below.</p>
+      <div class="meter" id="meter" role="progressbar" aria-label="Microphone level" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="meterBar" class="bar"></div></div>
+      <div class="status" id="micStatus" aria-live="polite">Microphone not enabled yet.</div>
+      <div class="cta-row" style="justify-content:flex-start; margin-top:14px">
+        <button class="btn" id="relightBtn" style="display:none">Relight candles 🔥</button>
+        <button class="btn secondary" id="manualBlowBtn">Blow out now ✨</button>
+        <button class="btn ghost" id="calibrateBtn" title="Re-detect your room's quiet level">Recalibrate 🎛️</button>
+      </div>
+    </div>
   </div>
 </section>
 
-<section style="text-align:center;margin-top:30px">
-  <h2>Open your letter 💌</h2>
-  <div class="envelope" id="envelope">
+<section id="letter" class="container card" aria-label="Open the envelope to read the letter">
+  <div class="envelope" id="envelope" role="button" aria-expanded="false" aria-label="Open letter" tabindex="0">
     <div class="env-body"></div>
     <div class="flap"></div>
-    <div class="letter">Happy Birthday! 🎉<br><br>From silly memes to deep talks — you’re my comfort place online.<br>Blow your candles & make a wish! 🫶</div>
+    <div class="letter-card" id="letterCard">
+      <h3 style="margin:0 0 8px; color:#3c4fd6">A little note for you 💌</h3>
+      <p id="letterText" style="margin:0; line-height:1.6">
+        Happy Birthday, bestie! Even from behind our screens, you’re one tap away —
+        thanks for the pep talks, chaos, and calm. Blow the candles, make a big wish,
+        and know I’m cheering for you from this side of the Wi-Fi. 🫶💻✨
+      </p>
+    </div>
+    <div class="seal" aria-hidden="true">⭐️</div>
+  </div>
+  <p class="hint" style="text-align:center;margin-top:14px">Tap the envelope (or press Enter) to open/close.</p>
+</section>
+
+<section id="gallery" class="container card" aria-label="Photo gallery">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 12px 0 12px">
+    <h2 style="margin:0">Our Photos 🎞️</h2>
+    <span class="hint">Uses 1.png → 13.png from the same folder</span>
+  </div>
+  <div class="grid" id="photoGrid" style="padding:12px;"></div>
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <img id="lightboxImg" alt="Large view">
   </div>
 </section>
 
-<section style="margin-top:30px">
-  <h2 style="text-align:center">Memories 📸🎥</h2>
-  <div class="gallery" id="gallery"></div>
-</section>
-
-<div class="lightbox" id="lightbox">
-  <div class="lightbox-content" id="lightboxContent"></div>
-</div>
+<footer>Made with 🫶 by You • Works best over HTTPS for mic • No audio is recorded or sent anywhere</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
-const files=["1.jpg","2.jpg","3.jpg","4.jpg","5.jpg","6.jpg","7.jpg","8.jpg","1.mp4","2.mp4","3.mp4","4.mp4"];
-const gallery=document.getElementById('gallery');
-files.forEach(f=>{
-  let el;
-  if(f.endsWith('.mp4')){
-    el=document.createElement('video');
-    el.src=f;el.autoplay=true;el.loop=true;el.muted=true;el.playsInline=true;
-  } else {
-    el=document.createElement('img');
-    el.src=f;
-  }
-  el.addEventListener('click',()=>openLightbox(f));
-  gallery.appendChild(el);
-});
-let dir=1;
-function autoScroll(){
-  gallery.scrollTop+=dir*0.5;
-  if(gallery.scrollTop+gallery.clientHeight>=gallery.scrollHeight)dir=-1;
-  if(gallery.scrollTop<=0)dir=1;
-  requestAnimationFrame(autoScroll);
-}
-autoScroll();
+/* ---- config ---- */
+const HER_NAME = "Bestie";
 
-const lb=document.getElementById('lightbox');
-const lbContent=document.getElementById('lightboxContent');
-function openLightbox(src){
-  lbContent.innerHTML="";
-  if(src.endsWith('.mp4')){
-    let v=document.createElement('video');
-    v.src=src;v.controls=true;v.autoplay=true;
-    lbContent.appendChild(v);
-  } else {
-    let i=document.createElement('img');
-    i.src=src;
-    lbContent.appendChild(i);
-  }
-  lb.classList.add('open');
-}
-lb.addEventListener('click',()=>lb.classList.remove('open'));
+/* name */
+document.getElementById('nameText').textContent = HER_NAME;
 
-document.getElementById('envelope').addEventListener('click',function(){
-  this.classList.toggle('open');
+/* smooth scroll */
+document.getElementById('scrollToCake').addEventListener('click',()=>{
+  document.getElementById('cake-zone').scrollIntoView({behavior:'smooth'});
 });
 
-let audioCtx, analyser, micStream, rafId, threshold=0.12, listening=false, blown=false;
-const meterBar=document.getElementById('meterBar');
-const micStatus=document.getElementById('micStatus');
-document.getElementById('enableMicBtn').addEventListener('click',enableMic);
-document.getElementById('manualBlowBtn').addEventListener('click',blowCandles);
-document.getElementById('relightBtn').addEventListener('click',relightCandles);
+/* envelope */
+const envelope = document.getElementById('envelope');
+function toggleEnvelope(){
+  const open = envelope.classList.toggle('open');
+  envelope.setAttribute('aria-expanded', String(open));
+}
+envelope.addEventListener('click', toggleEnvelope);
+envelope.addEventListener('keydown', e=>{
+  if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleEnvelope(); }
+});
+
+/* gallery build (1.png → 13.png) with film frame overlay */
+const grid = document.getElementById('photoGrid');
+for(let i=1;i<=13;i++){
+  const src = `${i}.png`;
+  const figure = document.createElement('figure');
+  figure.className = 'frame';
+  const img = document.createElement('img');
+  img.loading = "lazy";
+  img.src = src;
+  img.alt = `Photo ${i}`;
+  img.onclick = ()=> openLightbox(src);
+  figure.appendChild(img);
+
+  // Film overlay as inline SVG (no external asset needed)
+  const film = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  film.setAttribute('viewBox','0 0 300 400');
+  film.setAttribute('class','film');
+  film.innerHTML = `
+    <defs>
+      <mask id="holes">
+        <!-- white = visible (bar), black = holes -->
+        <rect x="0" y="0" width="300" height="400" fill="white"/>
+        ${Array.from({length:12}).map((_,k)=> {
+          const y=20 + k*32;
+          return `<rect x="10" y="${y}" width="20" height="18" rx="3" fill="black"/>`+
+                 `<rect x="270" y="${y}" width="20" height="18" rx="3" fill="black"/>`;
+        }).join('')}
+      </mask>
+    </defs>
+    <!-- side bars -->
+    <rect x="0" y="0" width="40" height="400" fill="black" mask="url(#holes)"/>
+    <rect x="260" y="0" width="40" height="400" fill="black" mask="url(#holes)"/>
+    <!-- subtle top/bottom border -->
+    <rect x="38" y="0" width="224" height="8" fill="black" opacity=".6"/>
+    <rect x="38" y="392" width="224" height="8" fill="black" opacity=".6"/>
+  `;
+  figure.appendChild(film);
+
+  grid.appendChild(figure);
+}
+
+/* lightbox */
+const lb = document.getElementById('lightbox');
+const lbImg = document.getElementById('lightboxImg');
+function openLightbox(src){ lbImg.src = src; lb.classList.add('open'); }
+lb.addEventListener('click', ()=> lb.classList.remove('open'));
+
+/* auto-scroll after candles blown */
+const gallery = document.getElementById('photoGrid');
+let scrollerId = null, dir=1;
+function startAutoScroll(){
+  if(scrollerId) return;
+  function step(){
+    gallery.parentElement.scrollTop += dir*0.7;
+    const wrap = gallery.parentElement;
+    const atBottom = Math.abs((wrap.scrollHeight - wrap.clientHeight) - wrap.scrollTop) < 2;
+    const atTop = wrap.scrollTop <= 0;
+    if(atBottom) dir=-1; if(atTop) dir=1;
+    scrollerId = requestAnimationFrame(step);
+  }
+  scrollerId = requestAnimationFrame(step);
+}
+
+/* mic + candles */
+let audioCtx, analyser, micStream, rafId, baseline = 0.02, threshold = 0.12, listening=false, blown=false;
+const meterBar = document.getElementById('meterBar');
+const micStatus = document.getElementById('micStatus');
+const relightBtn = document.getElementById('relightBtn');
+const manualBlowBtn = document.getElementById('manualBlowBtn');
+const calibrateBtn = document.getElementById('calibrateBtn');
+document.getElementById('enableMicBtn').addEventListener('click', enableMic);
+manualBlowBtn.addEventListener('click', extinguishCandles);
+relightBtn.addEventListener('click', relightCandles);
+calibrateBtn.addEventListener('click', calibrateNoise);
 
 async function enableMic(){
   try{
-    if(!navigator.mediaDevices){micStatus.textContent="Mic not supported";return;}
-    if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      micStatus.textContent = "Mic not supported in this browser. Use the button to blow out."; return;
+    }
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     await audioCtx.resume();
-    micStream=await navigator.mediaDevices.getUserMedia({audio:true});
-    const source=audioCtx.createMediaStreamSource(micStream);
-    analyser=audioCtx.createAnalyser();analyser.fftSize=1024;source.connect(analyser);
-    listening=true;blown=false;micStatus.textContent="Listening... blow!";
-    startLoop();
-  }catch(e){micStatus.textContent="Mic blocked";}
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation:true, noiseSuppression:true }, video:false });
+    const source = audioCtx.createMediaStreamSource(micStream);
+    analyser = audioCtx.createAnalyser(); analyser.fftSize = 1024; source.connect(analyser);
+    listening = true; blown = false; relightBtn.style.display='none';
+    micStatus.textContent = "Listening… blow towards the mic!";
+    startLoop(); calibrateNoise();
+  }catch(err){
+    micStatus.textContent = "Mic unavailable (need HTTPS/permission). Use the button to blow out.";
+  }
+}
+function calibrateNoise(){
+  if(!analyser){ micStatus.textContent = "Enable mic first to calibrate."; return; }
+  micStatus.textContent = "Calibrating room noise…";
+  const data = new Uint8Array(analyser.fftSize); let samples=0,sum=0; const t0=performance.now();
+  (function step(){
+    analyser.getByteTimeDomainData(data); const v = rms(data); sum+=v; samples++;
+    if(performance.now()-t0<1200){ requestAnimationFrame(step); }
+    else{ baseline=Math.max(0.01,(sum/samples)); threshold=Math.max(baseline*2.6,0.12);
+          micStatus.textContent=`Calibrated ✓ (blow > ${threshold.toFixed(2)})`; }
+  })();
 }
 function startLoop(){
   cancelAnimationFrame(rafId);
-  const data=new Uint8Array(analyser.fftSize);let over=0;
+  const data = new Uint8Array(analyser.fftSize); let over=0;
   (function loop(){
     analyser.getByteTimeDomainData(data);
-    const vol=rms(data);meterBar.style.width=(vol*200)+"%";
-    if(listening && !blown){
-      if(vol>threshold)over++; else over=Math.max(0,over-1);
-      if(over>5)blowCandles();
-    }
-    rafId=requestAnimationFrame(loop);
+    const v = rms(data); const pct=Math.min(100,Math.round(v*200));
+    meterBar.style.width = pct + "%";
+    if(listening && !blown){ over = v>threshold ? over+1 : Math.max(0,over-1); if(over>6) extinguishCandles(); }
+    rafId = requestAnimationFrame(loop);
   })();
 }
-function rms(buf){let sum=0;for(let v of buf){v=(v-128)/128;sum+=v*v}return Math.sqrt(sum/buf.length);}
-function blowCandles(){
-  blown=true;listening=false;
-  document.querySelectorAll('.flame').forEach(f=>f.classList.add('out'));
-  confetti();
-  micStatus.textContent="Candles out! 🎉";
-  document.getElementById('relightBtn').style.display='inline-block';
+function rms(buf){ let s=0; for(let i=0;i<buf.length;i++){ const v=(buf[i]-128)/128; s+=v*v } return Math.sqrt(s/buf.length) }
+
+const flames = [...document.querySelectorAll('.flame')];
+const smokes = [...document.querySelectorAll('.smoke')];
+
+function extinguishCandles(){
+  if(blown) return;
+  blown = true; listening=false;
+  flames.forEach(f=>f.classList.add('out'));
+  smokes.forEach((s,i)=> setTimeout(()=>{ s.classList.add('show'); setTimeout(()=>s.classList.remove('show'),1100); }, 60*i));
+  confettiBurst();
+  micStatus.textContent = "Candles out! Make a wish 🎉";
+  relightBtn.style.display='inline-block';
+  // start auto-scrolling gallery after success
+  startAutoScroll();
 }
 function relightCandles(){
-  blown=false;listening=true;
-  document.querySelectorAll('.flame').forEach(f=>f.classList.remove('out'));
-  micStatus.textContent="Relit 🔥 blow again!";
-  document.getElementById('relightBtn').style.display='none';
-}
-</script>
-</body>
-</html>
+  blown=false; listening=true;
+  flames.forEach(f=>f.classList.remove('out'));
+  micStatus.textContent="Relit 🔥 — blow again!";
+  relightBtn.style.displa
